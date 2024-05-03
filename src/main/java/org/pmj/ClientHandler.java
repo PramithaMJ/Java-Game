@@ -19,12 +19,23 @@ public class ClientHandler implements Runnable{
           this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
           this.clientUsername = bufferedReader.readLine();
             clientHandlers.add(this);
+          broadcastMessage("New Player is " + clientUsername + " connected");
        } catch (IOException e) {
-
+          closeEverything(socket, bufferedReader, bufferedWriter);
        }
     }
 
     @Override
     public void run() {
+        String messageFromClient;
+        while (socket.isConnected()){
+            try{
+                messageFromClient = bufferedReader.readLine();
+                broadcastMessage(messageFromClient);
+            } catch (IOException e) {
+                closeEverything(socket, bufferedReader, bufferedWriter);
+                break;
+            }
+        }
     }
 }
