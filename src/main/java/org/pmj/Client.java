@@ -21,18 +21,35 @@ public class Client {
        }
     }
 
-    public void sendMessage(){
+    private boolean isValidCard(String card) {
+        // Define the allowed card values
+        String[] allowedCards = {"A", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
+        // Check if the input card is in the allowed list
+        for (String allowedCard : allowedCards) {
+            if (allowedCard.equals(card)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void sendMessage() {
         try {
             bufferedWriter.write(username);
             bufferedWriter.newLine();
             bufferedWriter.flush();
 
             Scanner scanner = new Scanner(System.in);
-            while (socket.isConnected()){
+            while (socket.isConnected()) {
                 String messageToSend = scanner.nextLine();
-                bufferedWriter.write(messageToSend);
-                bufferedWriter.newLine();
-                bufferedWriter.flush();
+                // Validate the card before sending
+                if (isValidCard(messageToSend)) {
+                    bufferedWriter.write(messageToSend);
+                    bufferedWriter.newLine();
+                    bufferedWriter.flush();
+                } else {
+                    System.out.println("Invalid card! Please enter a valid card (A, 1-10, J, Q, K).");
+                }
             }
         } catch (IOException e) {
             closeEverything(socket, bufferedReader, bufferedWriter);
