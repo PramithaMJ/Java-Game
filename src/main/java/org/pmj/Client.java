@@ -11,45 +11,28 @@ public class Client {
     private String username;
 
     public Client(Socket socket, String username) {
-       try {
-              this.socket = socket;
-                this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-                this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                this.username = username;
-         } catch (IOException e) {
-              closeEverything(socket, bufferedReader, bufferedWriter);
-       }
-    }
-
-    private boolean isValidCard(String card) {
-        // Define the allowed card values
-        String[] allowedCards = {"A", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
-        // Check if the input card is in the allowed list
-        for (String allowedCard : allowedCards) {
-            if (allowedCard.equals(card)) {
-                return true;
-            }
+        try {
+            this.socket = socket;
+            this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            this.username = username;
+        } catch (IOException e) {
+            closeEverything(socket, bufferedReader, bufferedWriter);
         }
-        return false;
     }
 
-    public void sendMessage() {
+    public void sendMessage(){
         try {
             bufferedWriter.write(username);
             bufferedWriter.newLine();
             bufferedWriter.flush();
 
             Scanner scanner = new Scanner(System.in);
-            while (socket.isConnected()) {
+            while (socket.isConnected()){
                 String messageToSend = scanner.nextLine();
-                // Validate the card before sending
-                if (isValidCard(messageToSend)) {
-                    bufferedWriter.write(messageToSend);
-                    bufferedWriter.newLine();
-                    bufferedWriter.flush();
-                } else {
-                    System.out.println("Invalid card! Please enter a valid card (A, 1-10, J, Q, K).");
-                }
+                bufferedWriter.write(messageToSend);
+                bufferedWriter.newLine();
+                bufferedWriter.flush();
             }
         } catch (IOException e) {
             closeEverything(socket, bufferedReader, bufferedWriter);
@@ -90,12 +73,12 @@ public class Client {
     }
 
     public static void main(String[] args) throws IOException {
-       Scanner scanner = new Scanner(System.in);
-         System.out.println("Enter your username: ");
-            String username = scanner.nextLine();
-            Socket socket = new Socket("localhost", 1234);
-            Client client = new Client(socket, username);
-            client.listenForMessages();
-            client.sendMessage();
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter your username: ");
+        String username = scanner.nextLine();
+        Socket socket = new Socket("localhost", 1234);
+        Client client = new Client(socket, username);
+        client.listenForMessages();
+        client.sendMessage();
     }
 }

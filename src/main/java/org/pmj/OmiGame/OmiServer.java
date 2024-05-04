@@ -1,3 +1,4 @@
+/*
 package org.pmj;
 
 import org.pmj.OmiGame.OmiGame;
@@ -61,9 +62,35 @@ public class OmiServer {
 
         @Override
         public void run() {
-            // Implement communication with clients
+            // Implement communication with clients here
             // Use writer to send messages to clients
             // Use reader to receive messages from clients
+            try {
+                // Listen for messages from the client
+                String inputLine;
+                while ((inputLine = reader.readLine()) != null) {
+                    System.out.println("Received message from client: " + inputLine);
+                    // Process the received message
+                    handleMessage(inputLine);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
+
+        private void handleMessage(String message) {
+            // Handle different types of messages from the client
+            // For example, you might have messages for choosing trump suit,
+            // playing a card, requesting game state, etc.
+            // Parse the message and take appropriate action
+            // Send back responses or updates to the client as needed
+        }
+
+        public void sendMessage(String message) {
+            writer.println(message);
+        }
+
     }
 }
+*/

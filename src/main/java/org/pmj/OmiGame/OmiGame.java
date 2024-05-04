@@ -3,63 +3,45 @@ package org.pmj.OmiGame;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.*;
 
 public class OmiGame {
-    private Deck deck;
+    private List<Card> cardsPlayed;
     private List<Player> players;
-    private int dealerIndex;
-    private int currentPlayerIndex;
-    private Suit trumpSuit;
-    private List<Trick> tricks;
 
     public OmiGame() {
-        deck = new Deck();
+        cardsPlayed = new ArrayList<>();
         players = new ArrayList<>();
-        tricks = new ArrayList<>();
-        dealerIndex = 0; // Start with the first player as dealer
-        currentPlayerIndex = dealerIndex;
-        // Initialize players (North, East, South, West)
-        for (int i = 0; i < 4; i++) {
-            players.add(new Player("Player " + i));
-        }
     }
 
-    public void start() {
-        deck.shuffle();
-        dealCards();
-        determineTrumpSuit();
-        play();
+    public void addPlayer(Player player) {
+        players.add(player);
     }
 
-    private void dealCards() {
-        for (int i = 0; i < 8; i++) {
-            for (Player player : players) {
-                player.addCard(deck.drawCard());
+    public void playCard(Player player, Card card) {
+        cardsPlayed.add(card);
+        player.removeCard(card);
+    }
+
+    public Player determineWinner() {
+        if (cardsPlayed.isEmpty()) return null;
+
+        Card highestCard = cardsPlayed.get(0);
+        for (int i = 1; i < cardsPlayed.size(); i++) {
+            Card currentCard = cardsPlayed.get(i);
+            if (currentCard.getRank().compareTo(highestCard.getRank()) > 0 ||
+                    (currentCard.getRank() == highestCard.getRank() &&
+                            currentCard.getSuit().compareTo(highestCard.getSuit()) > 0)) {
+                highestCard = currentCard;
             }
         }
-    }
 
-    private void determineTrumpSuit() {
-        // Implement logic to determine trump suit
-        // For example, let's assume the dealer chooses the trump suit
-        Player dealer = players.get(dealerIndex);
-        Card trumpCard = dealer.chooseTrump();
-        trumpSuit = trumpCard.getSuit();
-    }
-
-    private void play() {
-        for (int i = 0; i < 8; i++) {
-            Trick trick = new Trick();
-            for (int j = 0; j < 4; j++) {
-                Player player = players.get(currentPlayerIndex);
-                Card card = player.playCard();
-                trick.addCard(card);
-                currentPlayerIndex = (currentPlayerIndex + 1) % 4;
+        for (Player player : players) {
+            if (player.hasCard(highestCard)) {
+                return player;
             }
-            tricks.add(trick);
-            // Determine winner of the trick and update scores
-            // Implement logic to handle trick-taking and scoring
         }
-        // Determine the winner of the game based on scores
+
+        return null; // No winner found
     }
 }

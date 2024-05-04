@@ -14,6 +14,4 @@ class Trick {
         cards.add(card);
     }
 
-    // Other methods for determining the winner of the trick
-    // and updating scores
 }
