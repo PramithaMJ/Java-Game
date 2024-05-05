@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.pmj</groupId>
-    <artifactId>omi-game</artifactId>
+    <artifactId>four-player-omi-game</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
