@@ -1,5 +1,6 @@
 package org.example;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -11,6 +12,7 @@ public class OmiServer {
     public OmiServer() {
         gameLogic = new OmiGameLogic();
     }
+
 
     public static void main(String[] args) {
         new OmiServer().start();
