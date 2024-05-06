@@ -95,6 +95,7 @@ public class Player {
         handPanel.removeAll();
         for (Card card : hand) {
             ImageIcon imageIcon = new ImageIcon(getClass().getResource(card.getImagePath()));
+
             Image image = imageIcon.getImage();
             Image newImage = image.getScaledInstance(80, 120, Image.SCALE_SMOOTH);
             ImageIcon newImageIcon = new ImageIcon(newImage);
