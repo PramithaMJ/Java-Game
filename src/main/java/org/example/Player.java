@@ -1,6 +1,10 @@
 package org.example;
 
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,25 +16,56 @@ public class Player {
     private List<Card> hand;
     private BufferedReader reader;
 
-    public Player(String name){
+    public Player(String name) {
         this.name = name;
         hand = new ArrayList<>();
         reader = new BufferedReader(new InputStreamReader(System.in));
     }
 
-    public void addToDeck(Card card){
+
+    public void addToDeck(Card card) {
         hand.add(card);
     }
 
-    public void removeFromDeck(Card card){
-        hand.remove(card);
+    public int findCardIndex(Card card) {
+        Rank targetRank = card.getRank();
+        Suit targetSuit = card.getSuit();
+
+        for (int i = 0; i < hand.size(); i++) {
+            Card currentCard = hand.get(i);
+            if (currentCard.getRank() == targetRank && currentCard.getSuit() == targetSuit) {
+                return i; // Return the index if the card with matching rank and suit is found
+            }
+        }
+        return -1; // Return -1 if the card is not found in the hand
     }
 
-    public boolean hasCard(Card card){
-        return hand.contains(card);
+    public void removeFromDeck(Card card) {
+        int index = findCardIndex(card);
+        if (index != -1) {
+
+            hand.remove(index);
+        } else {
+            //System.out.println("Card not found in the hand.");
+        }
     }
 
-    public String getName(){
+    public boolean hasCard(Card card) {
+        Rank targetRank = card.getRank();
+        Suit targetSuit = card.getSuit();
+
+        for (Card c : hand) {
+            Rank currentRank = c.getRank();
+            Suit currentSuit = c.getSuit();
+            if (currentRank == targetRank && currentSuit == targetSuit) {
+                return true; // Card found in the hand
+            }
+        }
+        return false; // Card not found in the hand
+    }
+
+
+    public String getName() {
         return name;
     }
 
@@ -72,9 +107,10 @@ public class Player {
     }
 
     public void printHand() {
-        System.out.println(name+" Your hand:");
+        System.out.println(name + " Your hand:");
         for (Card card : hand) {
             System.out.println(card);
+
         }
     }
 }

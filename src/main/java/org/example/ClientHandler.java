@@ -1,5 +1,6 @@
 package org.example;
 
+import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -25,6 +26,7 @@ class ClientHandler implements Runnable {
 
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
+
                 System.out.println("Received from client: " + inputLine);
                 server.getGameLogic().processInput(inputLine); // Forward client input to game logic
             }
