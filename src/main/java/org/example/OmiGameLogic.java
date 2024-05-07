@@ -16,6 +16,7 @@ public class OmiGameLogic {
     private int dealerIndex;
     private List<Card> currentTrick;
     private Suit trumps;
+    private Player winner;
 
     // window
     int windowWidth = 800;
@@ -88,12 +89,6 @@ public class OmiGameLogic {
                         trumps = suit; // Set the chosen trump suit
                         System.out.println("Trumps named: " + trumps);
                         trumpFrame.dispose(); // Close the trump selection screen
-
-                        // Display hands for each player after selecting trump
-                        team1.getPlayer1().displayHand();
-                        team1.getPlayer2().displayHand();
-                        team2.getPlayer1().displayHand();
-                        team2.getPlayer2().displayHand();
                     }
                 });
                 trumpPanel.add(suitButton);
@@ -120,11 +115,6 @@ public class OmiGameLogic {
         roundNumber = 1;
         currentTrick = new ArrayList<>();
 
-        // Display hands for each player
-        player1.displayHand();
-        player2.displayHand();
-        player3.displayHand();
-        player4.displayHand();
     }
 
     private void dealCards() {
@@ -146,15 +136,10 @@ public class OmiGameLogic {
     }
 
     private void nameTrumps() {
+        Scanner scanner = new Scanner(System.in);
 
         getCurrentRightPlayer().printHand();
         System.out.println("Player to the right of the dealer, please name trumps (CLUBS, DIAMONDS, HEARTS, SPADES):");
-
-     /*   Scanner scanner = new Scanner(System.in);
-        System.out.println("Player to the right of the dealer, please name trumps (CLUBS, DIAMONDS, HEARTS, SPADES):");
-
-        frame.add(buttonPanel, BorderLayout.SOUTH);
-
         try {
             String trumpInput = scanner.nextLine().toUpperCase();
             trumps = Suit.valueOf(trumpInput);
@@ -163,10 +148,11 @@ public class OmiGameLogic {
         } catch (IllegalArgumentException e) {
             System.out.println("Invalid input. Please enter a valid suit.");
             nameTrumps();
-        }*/
-
-        createChooseTrumpScreen();
+        }
+        //  getCurrentRightPlayer().printHand();
+        // createChooseTrumpScreen();
     }
+
     private Player getCurrentDealer() {
         switch (dealerIndex) {
             case 0:
@@ -193,6 +179,7 @@ public class OmiGameLogic {
                 return team2.getPlayer2();
         }
     }
+
     private Player getCurrentRightPlayer() {
         int rightIndex = (dealerIndex - 1) % 4;
         switch (rightIndex) {
@@ -223,12 +210,17 @@ public class OmiGameLogic {
                 return false; // Player has a card of the lead suit, must play that card
             }
         }
+
         return true; // Player doesn't have the lead suit, any card is valid
     }
-
     private void playTrick() {
         currentTrick.clear(); // Clear the current trick
-        Player currentPlayer = getCurrentDealer(); // Start with the player to the right of the dealer
+        Player currentPlayer;
+        if(roundNumber==1){
+            currentPlayer = getCurrentRightPlayer(); // Start with the player to the right of the dealer
+        }else{
+            currentPlayer = winner;
+        }
 
         while (currentTrick.size() < 4) {
             System.out.println(currentPlayer.getName() + "'s turn.");
@@ -240,13 +232,15 @@ public class OmiGameLogic {
                 System.out.println("Invalid play. Please follow suit if possible.");
                 continue;
             }
+
             currentTrick.add(cardPlayed);
             System.out.println(currentPlayer.getName() + " played: " + cardPlayed);
             currentPlayer = getNextPlayer(currentPlayer);
         }
-        determineTrickWinner();
-    }
 
+        determineTrickWinner();
+        removePlayedCards();
+    }
     private Player getNextPlayer(Player currentPlayer) {
         if (currentPlayer == team1.getPlayer1()) {
             return team1.getPlayer2();
@@ -285,14 +279,25 @@ public class OmiGameLogic {
 
         if (trickWinner != null) {
             System.out.println("Trick won by " + trickWinner.getName());
-
+            winner = trickWinner;
         } else {
             System.out.println("Trick tied. No winner.");
         }
 
+    }
+
+    private void removePlayedCards(){
+        for(Card card : currentTrick){
+            team1.getPlayer1().removeFromDeck(card);
+            team1.getPlayer2().removeFromDeck(card);
+            team2.getPlayer1().removeFromDeck(card);
+            team2.getPlayer2().removeFromDeck(card);
+        }
         // Clear the current trick for the next round
         currentTrick.clear();
     }
+
+
     private Player getPlayerByCard(Card card) {
         if (team1.getPlayer1().hasCard(card)) {
             return team1.getPlayer1();
@@ -321,15 +326,16 @@ public class OmiGameLogic {
             }
 
             System.out.println("Press enter to play round " + roundNumber);
-           // scanner.nextLine();
             playTrick();
 
             roundNumber++;
         }
     }
 
+
     // New method to process input
     public void processInput(String input) {
+        playGame();
         if (input.equals("playGame")) {
             playGame();
         } else {

@@ -14,44 +14,62 @@ import java.util.List;
 public class Player {
     private String name;
     private List<Card> hand;
-  //  private BufferedReader reader;
-    private JFrame handFrame;
-    private JPanel handPanel;
+    private BufferedReader reader;
 
-
-    public Player(String name){
+    public Player(String name) {
         this.name = name;
         hand = new ArrayList<>();
-        //reader = new BufferedReader(new InputStreamReader(System.in));
-
-        handFrame = new JFrame(name + "'s Hand");
-        handFrame.setSize(400, 200);
-        handFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        handPanel = new JPanel();
-        handFrame.add(handPanel);
-        handPanel.setLayout(new FlowLayout());
+        reader = new BufferedReader(new InputStreamReader(System.in));
     }
 
-    public void addToDeck(Card card){
+
+    public void addToDeck(Card card) {
         hand.add(card);
-        updateHandPanel();
     }
 
-    public void removeFromDeck(Card card){
-        hand.remove(card);
-        updateHandPanel();
+    public int findCardIndex(Card card) {
+        Rank targetRank = card.getRank();
+        Suit targetSuit = card.getSuit();
+
+        for (int i = 0; i < hand.size(); i++) {
+            Card currentCard = hand.get(i);
+            if (currentCard.getRank() == targetRank && currentCard.getSuit() == targetSuit) {
+                return i; // Return the index if the card with matching rank and suit is found
+            }
+        }
+        return -1; // Return -1 if the card is not found in the hand
     }
 
-    public boolean hasCard(Card card){
-        return hand.contains(card);
+    public void removeFromDeck(Card card) {
+        int index = findCardIndex(card);
+        if (index != -1) {
+            hand.remove(index);
+        } else {
+            //System.out.println("Card not found in the hand.");
+        }
     }
 
-    public String getName(){
+    public boolean hasCard(Card card) {
+        Rank targetRank = card.getRank();
+        Suit targetSuit = card.getSuit();
+
+        for (Card c : hand) {
+            Rank currentRank = c.getRank();
+            Suit currentSuit = c.getSuit();
+            if (currentRank == targetRank && currentSuit == targetSuit) {
+                return true; // Card found in the hand
+            }
+        }
+        return false; // Card not found in the hand
+    }
+
+
+    public String getName() {
         return name;
     }
 
     public Card playCard() {
-        /*System.out.println(name + ", Rank:");
+        System.out.println(name + ", Rank:");
         Rank rank = null;
         Suit suit = null;
         try {
@@ -80,41 +98,15 @@ public class Player {
         }
 
         hand.remove(selectedCard);
-        return selectedCard;*/
-        return null;
+        return selectedCard;
     }
 
     public List<Card> getHand() {
         return hand;
     }
-    public void displayHand() {
-        handFrame.setVisible(true);
-    }
-
-    private void updateHandPanel() {
-        handPanel.removeAll();
-        for (Card card : hand) {
-            ImageIcon imageIcon = new ImageIcon(getClass().getResource(card.getImagePath()));
-
-            Image image = imageIcon.getImage();
-            Image newImage = image.getScaledInstance(80, 120, Image.SCALE_SMOOTH);
-            ImageIcon newImageIcon = new ImageIcon(newImage);
-            JButton button = new JButton(newImageIcon);
-            button.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    // Handle card selection
-                    System.out.println("Selected card: " + card);
-                }
-            });
-            handPanel.add(button);
-        }
-        handFrame.revalidate();
-        handFrame.repaint();
-    }
 
     public void printHand() {
-        System.out.println(name+" Your hand:");
+        System.out.println(name + " Your hand:");
         for (Card card : hand) {
             System.out.println(card);
         }
