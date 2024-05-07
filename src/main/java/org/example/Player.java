@@ -43,6 +43,7 @@ public class Player {
     public void removeFromDeck(Card card) {
         int index = findCardIndex(card);
         if (index != -1) {
+
             hand.remove(index);
         } else {
             //System.out.println("Card not found in the hand.");
@@ -109,6 +110,7 @@ public class Player {
         System.out.println(name + " Your hand:");
         for (Card card : hand) {
             System.out.println(card);
+
         }
     }
 }

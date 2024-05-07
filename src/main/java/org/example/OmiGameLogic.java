@@ -43,6 +43,12 @@ public class OmiGameLogic {
     JButton hintButton = new JButton("Hit");
     JButton stayButton = new JButton("Stay");
 
+
+    public JPanel getGamePanel() {
+        return gamePanel;
+    }
+
+
     public OmiGameLogic() {
         initializeGame();
         frame.setVisible(true);
@@ -115,6 +121,17 @@ public class OmiGameLogic {
         roundNumber = 1;
         currentTrick = new ArrayList<>();
 
+        JButton playGameButton = new JButton("Play Game");
+        playGameButton.setFocusable(false);
+        playGameButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                playGame(); // Call playGame() when the button is clicked
+            }
+        });
+        buttonPanel.add(playGameButton);
+        System.out.println("playGame.");
+
     }
 
     private void dealCards() {
@@ -139,6 +156,7 @@ public class OmiGameLogic {
         Scanner scanner = new Scanner(System.in);
 
         getCurrentRightPlayer().printHand();
+
         System.out.println("Player to the right of the dealer, please name trumps (CLUBS, DIAMONDS, HEARTS, SPADES):");
         try {
             String trumpInput = scanner.nextLine().toUpperCase();
@@ -150,7 +168,7 @@ public class OmiGameLogic {
             nameTrumps();
         }
         //  getCurrentRightPlayer().printHand();
-        // createChooseTrumpScreen();
+        createChooseTrumpScreen();
     }
 
     private Player getCurrentDealer() {
