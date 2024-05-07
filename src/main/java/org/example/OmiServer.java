@@ -13,7 +13,6 @@ public class OmiServer {
         gameLogic = new OmiGameLogic();
     }
 
-
     public static void main(String[] args) {
         new OmiServer().start();
     }

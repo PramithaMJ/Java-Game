@@ -146,9 +146,11 @@ public class OmiGameLogic {
     }
 
     private void nameTrumps() {
+
+        getCurrentRightPlayer().printHand();
         System.out.println("Player to the right of the dealer, please name trumps (CLUBS, DIAMONDS, HEARTS, SPADES):");
 
-/*        Scanner scanner = new Scanner(System.in);
+     /*   Scanner scanner = new Scanner(System.in);
         System.out.println("Player to the right of the dealer, please name trumps (CLUBS, DIAMONDS, HEARTS, SPADES):");
 
         frame.add(buttonPanel, BorderLayout.SOUTH);
@@ -165,7 +167,6 @@ public class OmiGameLogic {
 
         createChooseTrumpScreen();
     }
-
     private Player getCurrentDealer() {
         switch (dealerIndex) {
             case 0:
@@ -182,6 +183,19 @@ public class OmiGameLogic {
     private Player getCurrentLeftPlayer() {
         int leftIndex = (dealerIndex + 1) % 4;
         switch (leftIndex) {
+            case 0:
+                return team1.getPlayer1();
+            case 1:
+                return team1.getPlayer2();
+            case 2:
+                return team2.getPlayer1();
+            default:
+                return team2.getPlayer2();
+        }
+    }
+    private Player getCurrentRightPlayer() {
+        int rightIndex = (dealerIndex - 1) % 4;
+        switch (rightIndex) {
             case 0:
                 return team1.getPlayer1();
             case 1:
@@ -307,7 +321,7 @@ public class OmiGameLogic {
             }
 
             System.out.println("Press enter to play round " + roundNumber);
-            scanner.nextLine();
+           // scanner.nextLine();
             playTrick();
 
             roundNumber++;
