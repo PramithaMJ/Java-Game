@@ -397,7 +397,7 @@ public class OmiGameLogic {
 
         // Render Player Name
         String playerName = "Player One";
-        Font playerNameFont = new Font("Arial", Font.BOLD, 16);
+        Font playerNameFont = new Font("Arial", Font.BOLD, 20);
         FontMetrics fontMetrics = gamePanel.getFontMetrics(playerNameFont);
         int playerNameWidth = fontMetrics.stringWidth(playerName);
         int playerNameX = (gamePanel.getWidth() - playerNameWidth) / 2; // Center horizontally
