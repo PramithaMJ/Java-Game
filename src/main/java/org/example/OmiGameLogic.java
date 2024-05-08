@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.CountDownLatch;
 
 public class OmiGameLogic {
     private Team team1;
@@ -17,6 +18,8 @@ public class OmiGameLogic {
     private List<Card> currentTrick;
     private Suit trumps;
     private Player winner;
+
+    private CountDownLatch latch;
 
     // window
     int windowWidth = 800;
@@ -79,31 +82,16 @@ public class OmiGameLogic {
         frame.add(playGameButton);
 
         frame.setVisible(true);*/
-    }
 
-        private void createChooseTrumpScreen() {
-            JFrame trumpFrame = new JFrame("Choose Trump");
-            JPanel trumpPanel = new JPanel();
-            trumpPanel.setLayout(new GridLayout(2,2)); // 2x2 grid for the buttons
-
-            // Create four buttons for choosing the trump suit
-            for (Suit suit : Suit.values()) {
-                JButton suitButton = new JButton(suit.toString());
-                suitButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        trumps = suit; // Set the chosen trump suit
-                        System.out.println("Trumps named: " + trumps);
-                        trumpFrame.dispose(); // Close the trump selection screen
-                    }
-                });
-                trumpPanel.add(suitButton);
+        stayButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose(); // Close the frame when "Stay" button is clicked
             }
-            trumpFrame.add(trumpPanel);
-            trumpFrame.pack();
-            trumpFrame.setLocationRelativeTo(null); // Center the frame on the screen
-            trumpFrame.setVisible(true);
+        });
+
     }
+
 
     private void initializeGame() {
         deck = new Deck();
@@ -153,12 +141,19 @@ public class OmiGameLogic {
     }
 
     private void nameTrumps() {
-        Scanner scanner = new Scanner(System.in);
+      //  Scanner scanner = new Scanner(System.in);
 
         getCurrentRightPlayer().printHand();
 
+        //==================================================
+        renderHand(getCurrentRightPlayer().getHand());
         System.out.println("Player to the right of the dealer, please name trumps (CLUBS, DIAMONDS, HEARTS, SPADES):");
-        try {
+
+        // Create GUI For console  log CLUBS, DIAMONDS, HEARTS, SPADES
+       // nameTrumpsGUI();
+        //============================================
+ /*     try {
+           Scanner scanner = new Scanner(System.in);
             String trumpInput = scanner.nextLine().toUpperCase();
             trumps = Suit.valueOf(trumpInput);
 
@@ -166,9 +161,43 @@ public class OmiGameLogic {
         } catch (IllegalArgumentException e) {
             System.out.println("Invalid input. Please enter a valid suit.");
             nameTrumps();
+        }*/
+
+
+    }
+
+    private void nameTrumpsGUI(){
+        // Create a JFrame to hold the buttons
+        String[] options = {"Clubs", "Diamonds", "Hearts", "Spades"};
+
+        // Show the option dialog
+        int choice = JOptionPane.showOptionDialog(null, "Select Trump Suit", "Trump Suit Selection", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+
+        // Check the selected option and set the trump suit accordingly
+        switch (choice) {
+            case 0:
+                trumps = Suit.C;
+                break;
+            case 1:
+                trumps = Suit.D;
+                break;
+            case 2:
+                trumps = Suit.H;
+                break;
+            case 3:
+                trumps = Suit.S;
+                break;
+            default:
+                // If the user closes the dialog without selecting an option, handle it here
+                System.out.println("No suit selected");
+                // You might want to handle this case differently based on your requirements
+                break;
         }
-        //  getCurrentRightPlayer().printHand();
-        createChooseTrumpScreen();
+
+        // Print the selected trump suit to the console
+        if (choice >= 0 && choice < options.length) {
+            System.out.println("Trumps named: " + options[choice]);
+        }
     }
 
     private Player getCurrentDealer() {
@@ -360,4 +389,33 @@ public class OmiGameLogic {
             System.out.println("Invalid input. Please enter 'playGame' to start the game.");
         }
     }
+
+    private void renderHand(List<Card> hand) {
+
+
+     // Clear the gamePanel before rendering
+        gamePanel.removeAll();
+
+        // Calculate spacing for card positioning
+        int startX = 20;
+        int startY = 20;
+        int paddingX = 10;
+
+        // Render each card in the hand
+        for (int i = 0; i < hand.size(); i++) {
+            Card card = hand.get(i);
+            String imagePath = card.getImagePath(); // Assuming you have image paths for cards
+
+            // Load the card image and draw it on the gamePanel
+            try {
+                Image cardImage = new ImageIcon(getClass().getResource(imagePath)).getImage();
+                int x = startX + (i * (cardWidth + paddingX));
+                int y = startY;
+                gamePanel.getGraphics().drawImage(cardImage, x, y, cardWidth, cardHeight, null);
+            } catch (Exception e) {
+                e.printStackTrace(); // Handle image loading errors
+            }
+        }
+    }
+
 }
