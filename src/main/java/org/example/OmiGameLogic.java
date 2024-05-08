@@ -82,6 +82,14 @@ public class OmiGameLogic {
         frame.add(playGameButton);
 
         frame.setVisible(true);*/
+
+        stayButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose(); // Close the frame when "Stay" button is clicked
+            }
+        });
+
     }
 
 
@@ -142,9 +150,9 @@ public class OmiGameLogic {
         System.out.println("Player to the right of the dealer, please name trumps (CLUBS, DIAMONDS, HEARTS, SPADES):");
 
         // Create GUI For console  log CLUBS, DIAMONDS, HEARTS, SPADES
-
+       // nameTrumpsGUI();
         //============================================
-      try {
+ /*     try {
            Scanner scanner = new Scanner(System.in);
             String trumpInput = scanner.nextLine().toUpperCase();
             trumps = Suit.valueOf(trumpInput);
@@ -153,9 +161,43 @@ public class OmiGameLogic {
         } catch (IllegalArgumentException e) {
             System.out.println("Invalid input. Please enter a valid suit.");
             nameTrumps();
+        }*/
+
+
+    }
+
+    private void nameTrumpsGUI(){
+        // Create a JFrame to hold the buttons
+        String[] options = {"Clubs", "Diamonds", "Hearts", "Spades"};
+
+        // Show the option dialog
+        int choice = JOptionPane.showOptionDialog(null, "Select Trump Suit", "Trump Suit Selection", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+
+        // Check the selected option and set the trump suit accordingly
+        switch (choice) {
+            case 0:
+                trumps = Suit.C;
+                break;
+            case 1:
+                trumps = Suit.D;
+                break;
+            case 2:
+                trumps = Suit.H;
+                break;
+            case 3:
+                trumps = Suit.S;
+                break;
+            default:
+                // If the user closes the dialog without selecting an option, handle it here
+                System.out.println("No suit selected");
+                // You might want to handle this case differently based on your requirements
+                break;
         }
 
-
+        // Print the selected trump suit to the console
+        if (choice >= 0 && choice < options.length) {
+            System.out.println("Trumps named: " + options[choice]);
+        }
     }
 
     private Player getCurrentDealer() {
@@ -348,9 +390,10 @@ public class OmiGameLogic {
         }
     }
 
-
     private void renderHand(List<Card> hand) {
-        // Clear the gamePanel before rendering
+
+
+     // Clear the gamePanel before rendering
         gamePanel.removeAll();
 
         // Calculate spacing for card positioning
@@ -373,10 +416,6 @@ public class OmiGameLogic {
                 e.printStackTrace(); // Handle image loading errors
             }
         }
-
-        // Refresh the gamePanel to reflect changes
-        gamePanel.revalidate();
-        gamePanel.repaint();
     }
 
 }
