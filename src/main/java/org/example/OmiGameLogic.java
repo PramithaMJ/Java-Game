@@ -29,14 +29,20 @@ public class OmiGameLogic {
     int cardHeight = 154;
 
     JFrame frame = new JFrame("Omi Game");
-    JPanel gamePanel = new JPanel(){
+    JPanel gamePanel = new JPanel() {
         @Override
-        public void paintComponent(Graphics g){
+        public void paintComponent(Graphics g) {
             super.paintComponent(g);
             try {
                 //draw hidden card
                 Image hiddenCardImg = new ImageIcon(getClass().getResource("/cards/BACK.png")).getImage();
                 g.drawImage(hiddenCardImg, 20, 20, cardWidth, cardHeight, null);
+
+                Image card2 = new ImageIcon(getClass().getResource("/cards/J-R.png")).getImage();
+                g.drawImage(card2, cardWidth + 30, 20, cardWidth, cardHeight, null);
+
+
+
             } catch (Exception e) {
                 e.printStackTrace(); // Print the exception details for debugging
             }
@@ -61,27 +67,14 @@ public class OmiGameLogic {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         gamePanel.setLayout(new BorderLayout());
-        gamePanel.setBackground(new Color(53,101,77));
+        gamePanel.setBackground(new Color(53, 101, 77));
         frame.add(gamePanel);
 
         hintButton.setFocusable(false);
         buttonPanel.add(hintButton);
         stayButton.setFocusable(false);
         buttonPanel.add(stayButton);
-        frame.add(buttonPanel , BorderLayout.SOUTH);
-
-/*        // Create "Play Game" button that fills the whole screen initially
-        JButton playGameButton = new JButton("Play Game");
-        playGameButton.setPreferredSize(new Dimension(windowWidth, windowHeight));
-        playGameButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                nameTrumps();
-            }
-        });
-        frame.add(playGameButton);
-
-        frame.setVisible(true);*/
+        frame.add(buttonPanel, BorderLayout.SOUTH);
 
         stayButton.addActionListener(new ActionListener() {
             @Override
@@ -141,16 +134,16 @@ public class OmiGameLogic {
     }
 
     private void nameTrumps() {
-      //  Scanner scanner = new Scanner(System.in);
+        //  Scanner scanner = new Scanner(System.in);
 
         getCurrentRightPlayer().printHand();
 
         //==================================================
-        renderHand(getCurrentRightPlayer().getHand());
+         renderHand(getCurrentRightPlayer().getHand());
         System.out.println("Player to the right of the dealer, please name trumps (CLUBS, DIAMONDS, HEARTS, SPADES):");
 
         // Create GUI For console  log CLUBS, DIAMONDS, HEARTS, SPADES
-       // nameTrumpsGUI();
+        nameTrumpsGUI();
         //============================================
  /*     try {
            Scanner scanner = new Scanner(System.in);
@@ -166,7 +159,7 @@ public class OmiGameLogic {
 
     }
 
-    private void nameTrumpsGUI(){
+    private void nameTrumpsGUI() {
         // Create a JFrame to hold the buttons
         String[] options = {"Clubs", "Diamonds", "Hearts", "Spades"};
 
@@ -260,12 +253,13 @@ public class OmiGameLogic {
 
         return true; // Player doesn't have the lead suit, any card is valid
     }
+
     private void playTrick() {
         currentTrick.clear(); // Clear the current trick
         Player currentPlayer;
-        if(roundNumber==1){
+        if (roundNumber == 1) {
             currentPlayer = getCurrentRightPlayer(); // Start with the player to the right of the dealer
-        }else{
+        } else {
             currentPlayer = winner;
         }
 
@@ -288,6 +282,7 @@ public class OmiGameLogic {
         determineTrickWinner();
         removePlayedCards();
     }
+
     private Player getNextPlayer(Player currentPlayer) {
         if (currentPlayer == team1.getPlayer1()) {
             return team1.getPlayer2();
@@ -333,8 +328,8 @@ public class OmiGameLogic {
 
     }
 
-    private void removePlayedCards(){
-        for(Card card : currentTrick){
+    private void removePlayedCards() {
+        for (Card card : currentTrick) {
             team1.getPlayer1().removeFromDeck(card);
             team1.getPlayer2().removeFromDeck(card);
             team2.getPlayer1().removeFromDeck(card);
@@ -392,13 +387,12 @@ public class OmiGameLogic {
 
     private void renderHand(List<Card> hand) {
 
-
-     // Clear the gamePanel before rendering
+        // Clear the gamePanel before rendering
         gamePanel.removeAll();
 
         // Calculate spacing for card positioning
         int startX = 20;
-        int startY = 20;
+        int startY = 320;
         int paddingX = 10;
 
         // Render each card in the hand
@@ -417,5 +411,4 @@ public class OmiGameLogic {
             }
         }
     }
-
 }
