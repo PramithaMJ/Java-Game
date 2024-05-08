@@ -22,8 +22,8 @@ public class OmiGameLogic {
     private CountDownLatch latch;
 
     // window
-    int windowWidth = 800;
-    int windowHeight = 600;
+    int windowWidth = 1200;
+    int windowHeight = 900;
 
     int cardWidth = 110; //ratio should 1/1.4
     int cardHeight = 154;
@@ -391,9 +391,20 @@ public class OmiGameLogic {
         gamePanel.removeAll();
 
         // Calculate spacing for card positioning
-        int startX = 20;
-        int startY = 320;
+        int startX = 400;
+        int startY = 620;
         int paddingX = 10;
+
+        // Render Player Name
+        String playerName = "Player One";
+        Font playerNameFont = new Font("Arial", Font.BOLD, 16);
+        FontMetrics fontMetrics = gamePanel.getFontMetrics(playerNameFont);
+        int playerNameWidth = fontMetrics.stringWidth(playerName);
+        int playerNameX = (gamePanel.getWidth() - playerNameWidth) / 2; // Center horizontally
+        int playerNameY = startY - 30; // 30 pixels above the first card
+
+        gamePanel.getGraphics().setFont(playerNameFont);
+        gamePanel.getGraphics().drawString(playerName, playerNameX, playerNameY);
 
         // Render each card in the hand
         for (int i = 0; i < hand.size(); i++) {
