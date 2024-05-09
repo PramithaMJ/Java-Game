@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -41,8 +43,6 @@ public class OmiGameLogic {
                 Image card2 = new ImageIcon(getClass().getResource("/cards/J-R.png")).getImage();
                 g.drawImage(card2, cardWidth + 30, 20, cardWidth, cardHeight, null);
 
-
-
             } catch (Exception e) {
                 e.printStackTrace(); // Print the exception details for debugging
             }
@@ -50,7 +50,7 @@ public class OmiGameLogic {
     };
     JPanel buttonPanel = new JPanel();
     JButton hintButton = new JButton("Hit");
-    JButton stayButton = new JButton("Stay");
+    JButton exitButton = new JButton("Exit");
 
 
     public JPanel getGamePanel() {
@@ -72,14 +72,14 @@ public class OmiGameLogic {
 
         hintButton.setFocusable(false);
         buttonPanel.add(hintButton);
-        stayButton.setFocusable(false);
-        buttonPanel.add(stayButton);
+        exitButton.setFocusable(false);
+        buttonPanel.add(exitButton);
         frame.add(buttonPanel, BorderLayout.SOUTH);
 
-        stayButton.addActionListener(new ActionListener() {
+        exitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                frame.dispose(); // Close the frame when "Stay" button is clicked
+                frame.dispose(); // Close the frame when "Exit" button is clicked
             }
         });
 
@@ -144,17 +144,6 @@ public class OmiGameLogic {
 
         // Create GUI For console  log CLUBS, DIAMONDS, HEARTS, SPADES
         nameTrumpsGUI();
-        //============================================
- /*     try {
-           Scanner scanner = new Scanner(System.in);
-            String trumpInput = scanner.nextLine().toUpperCase();
-            trumps = Suit.valueOf(trumpInput);
-
-            System.out.println("Trumps named: " + trumps);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Invalid input. Please enter a valid suit.");
-            nameTrumps();
-        }*/
 
 
     }
@@ -384,7 +373,7 @@ public class OmiGameLogic {
             System.out.println("Invalid input. Please enter 'playGame' to start the game.");
         }
     }
-
+    
     private void renderHand(List<Card> hand) {
 
         // Clear the gamePanel before rendering
@@ -417,9 +406,27 @@ public class OmiGameLogic {
                 int x = startX + (i * (cardWidth + paddingX));
                 int y = startY;
                 gamePanel.getGraphics().drawImage(cardImage, x, y, cardWidth, cardHeight, null);
+
+                // Add mouse listener to each card image
+                final int index = i; // To make index effectively final
+                gamePanel.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        // Check if the mouse click is within the bounds of the current card
+                        if (e.getX() >= x && e.getX() <= x + cardWidth && e.getY() >= y && e.getY() <= y + cardHeight) {
+                            // Handle the click event for this card
+                            handleCardClick(hand.get(index));
+                        }
+                    }
+                });
             } catch (Exception e) {
                 e.printStackTrace(); // Handle image loading errors
             }
         }
     }
+    private void handleCardClick(Card clickedCard) {
+        // Log the rank and suit of the clicked card to the console
+        System.out.println("Clicked Card: " + clickedCard.getRank() + " of " + clickedCard.getSuit());
+    }
+
 }
