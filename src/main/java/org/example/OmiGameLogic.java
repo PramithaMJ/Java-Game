@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -22,21 +24,25 @@ public class OmiGameLogic {
     private CountDownLatch latch;
 
     // window
-    int windowWidth = 800;
-    int windowHeight = 600;
+    int windowWidth = 1200;
+    int windowHeight = 900;
 
     int cardWidth = 110; //ratio should 1/1.4
     int cardHeight = 154;
 
     JFrame frame = new JFrame("Omi Game");
-    JPanel gamePanel = new JPanel(){
+    JPanel gamePanel = new JPanel() {
         @Override
-        public void paintComponent(Graphics g){
+        public void paintComponent(Graphics g) {
             super.paintComponent(g);
             try {
                 //draw hidden card
                 Image hiddenCardImg = new ImageIcon(getClass().getResource("/cards/BACK.png")).getImage();
                 g.drawImage(hiddenCardImg, 20, 20, cardWidth, cardHeight, null);
+
+                Image card2 = new ImageIcon(getClass().getResource("/cards/J-R.png")).getImage();
+                g.drawImage(card2, cardWidth + 30, 20, cardWidth, cardHeight, null);
+
             } catch (Exception e) {
                 e.printStackTrace(); // Print the exception details for debugging
             }
@@ -44,7 +50,7 @@ public class OmiGameLogic {
     };
     JPanel buttonPanel = new JPanel();
     JButton hintButton = new JButton("Hit");
-    JButton stayButton = new JButton("Stay");
+    JButton exitButton = new JButton("Exit");
 
 
     public JPanel getGamePanel() {
@@ -61,32 +67,19 @@ public class OmiGameLogic {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         gamePanel.setLayout(new BorderLayout());
-        gamePanel.setBackground(new Color(53,101,77));
+        gamePanel.setBackground(new Color(53, 101, 77));
         frame.add(gamePanel);
 
         hintButton.setFocusable(false);
         buttonPanel.add(hintButton);
-        stayButton.setFocusable(false);
-        buttonPanel.add(stayButton);
-        frame.add(buttonPanel , BorderLayout.SOUTH);
+        exitButton.setFocusable(false);
+        buttonPanel.add(exitButton);
+        frame.add(buttonPanel, BorderLayout.SOUTH);
 
-/*        // Create "Play Game" button that fills the whole screen initially
-        JButton playGameButton = new JButton("Play Game");
-        playGameButton.setPreferredSize(new Dimension(windowWidth, windowHeight));
-        playGameButton.addActionListener(new ActionListener() {
+        exitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                nameTrumps();
-            }
-        });
-        frame.add(playGameButton);
-
-        frame.setVisible(true);*/
-
-        stayButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frame.dispose(); // Close the frame when "Stay" button is clicked
+                frame.dispose(); // Close the frame when "Exit" button is clicked
             }
         });
 
@@ -141,32 +134,21 @@ public class OmiGameLogic {
     }
 
     private void nameTrumps() {
-      //  Scanner scanner = new Scanner(System.in);
+        //  Scanner scanner = new Scanner(System.in);
 
         getCurrentRightPlayer().printHand();
 
         //==================================================
-        renderHand(getCurrentRightPlayer().getHand());
+         renderHand(getCurrentRightPlayer().getHand());
         System.out.println("Player to the right of the dealer, please name trumps (CLUBS, DIAMONDS, HEARTS, SPADES):");
 
         // Create GUI For console  log CLUBS, DIAMONDS, HEARTS, SPADES
-       // nameTrumpsGUI();
-        //============================================
- /*     try {
-           Scanner scanner = new Scanner(System.in);
-            String trumpInput = scanner.nextLine().toUpperCase();
-            trumps = Suit.valueOf(trumpInput);
-
-            System.out.println("Trumps named: " + trumps);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Invalid input. Please enter a valid suit.");
-            nameTrumps();
-        }*/
+        nameTrumpsGUI();
 
 
     }
 
-    private void nameTrumpsGUI(){
+    private void nameTrumpsGUI() {
         // Create a JFrame to hold the buttons
         String[] options = {"Clubs", "Diamonds", "Hearts", "Spades"};
 
@@ -260,12 +242,13 @@ public class OmiGameLogic {
 
         return true; // Player doesn't have the lead suit, any card is valid
     }
+
     private void playTrick() {
         currentTrick.clear(); // Clear the current trick
         Player currentPlayer;
-        if(roundNumber==1){
+        if (roundNumber == 1) {
             currentPlayer = getCurrentRightPlayer(); // Start with the player to the right of the dealer
-        }else{
+        } else {
             currentPlayer = winner;
         }
 
@@ -288,6 +271,7 @@ public class OmiGameLogic {
         determineTrickWinner();
         removePlayedCards();
     }
+
     private Player getNextPlayer(Player currentPlayer) {
         if (currentPlayer == team1.getPlayer1()) {
             return team1.getPlayer2();
@@ -333,8 +317,8 @@ public class OmiGameLogic {
 
     }
 
-    private void removePlayedCards(){
-        for(Card card : currentTrick){
+    private void removePlayedCards() {
+        for (Card card : currentTrick) {
             team1.getPlayer1().removeFromDeck(card);
             team1.getPlayer2().removeFromDeck(card);
             team2.getPlayer1().removeFromDeck(card);
@@ -389,17 +373,27 @@ public class OmiGameLogic {
             System.out.println("Invalid input. Please enter 'playGame' to start the game.");
         }
     }
-
+    
     private void renderHand(List<Card> hand) {
 
-
-     // Clear the gamePanel before rendering
+        // Clear the gamePanel before rendering
         gamePanel.removeAll();
 
         // Calculate spacing for card positioning
-        int startX = 20;
-        int startY = 20;
+        int startX = 400;
+        int startY = 620;
         int paddingX = 10;
+
+        // Render Player Name
+        String playerName = "Player One";
+        Font playerNameFont = new Font("Arial", Font.BOLD, 20);
+        FontMetrics fontMetrics = gamePanel.getFontMetrics(playerNameFont);
+        int playerNameWidth = fontMetrics.stringWidth(playerName);
+        int playerNameX = (gamePanel.getWidth() - playerNameWidth) / 2; // Center horizontally
+        int playerNameY = startY - 30; // 30 pixels above the first card
+
+        gamePanel.getGraphics().setFont(playerNameFont);
+        gamePanel.getGraphics().drawString(playerName, playerNameX, playerNameY);
 
         // Render each card in the hand
         for (int i = 0; i < hand.size(); i++) {
@@ -412,10 +406,27 @@ public class OmiGameLogic {
                 int x = startX + (i * (cardWidth + paddingX));
                 int y = startY;
                 gamePanel.getGraphics().drawImage(cardImage, x, y, cardWidth, cardHeight, null);
+
+                // Add mouse listener to each card image
+                final int index = i; // To make index effectively final
+                gamePanel.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        // Check if the mouse click is within the bounds of the current card
+                        if (e.getX() >= x && e.getX() <= x + cardWidth && e.getY() >= y && e.getY() <= y + cardHeight) {
+                            // Handle the click event for this card
+                            handleCardClick(hand.get(index));
+                        }
+                    }
+                });
             } catch (Exception e) {
                 e.printStackTrace(); // Handle image loading errors
             }
         }
+    }
+    private void handleCardClick(Card clickedCard) {
+        // Log the rank and suit of the clicked card to the console
+        System.out.println("Clicked Card: " + clickedCard.getRank() + " of " + clickedCard.getSuit());
     }
 
 }
